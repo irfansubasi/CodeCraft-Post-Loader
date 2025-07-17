@@ -25,7 +25,7 @@
 
       .container {
         width: 100%;
-        max-width: 700px;
+        max-width: 800px;
         margin: 40px auto;
         padding: 40px 24px 24px 24px;
       }
@@ -58,7 +58,7 @@
         flex-direction: column;
         gap: 12px;
         transition: box-shadow 0.2s, transform 0.2s;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #2563eb;
       }
 
       .post-card:hover {
@@ -248,8 +248,15 @@
                 data.forEach((item) => {
                   const $item = $(
                     `<div class="post-card">
-                    <h2>${item.title.toUpperCase()}</h2>
-                    <p>${item.body}</p>
+                    <h2>${item.title
+                      .split(' ')
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(' ')}</h2>
+                    <p>${
+                      item.body.charAt(0).toUpperCase() + item.body.slice(1)
+                    }</p>
                   </div>`
                   );
                   $('#post-container').append($item);
