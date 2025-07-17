@@ -141,6 +141,21 @@
         background: #1e40af;
       }
 
+      #error-test-btn {
+        position: fixed;
+        top: 32px;
+        right: 32px;
+        z-index: 1000;
+        background: #ef4444;
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 14px 28px;
+        font-size: 0.8rem;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+        cursor: pointer;
+      }
+
       .all-posts-loaded {
         text-align: center;
         color: #64748b;
@@ -165,18 +180,30 @@
         <button id="retry-button">Retry</button>
       </div>
     </div>
+    <button id="error-test-btn">API Error Test</button>
 
     <script>
       $(document).ready(function () {
         let start = 0;
         const limit = 5;
         let isLoading = false;
+        let forceError = false;
+        if (localStorage.getItem('forceApiError') === '1') {
+          forceError = true;
+        }
 
         loadPosts();
 
         $('#retry-button').click(function () {
           $('#error-message').hide();
+          forceError = false;
+          localStorage.removeItem('forceApiError');
           loadPosts();
+        });
+
+        $('#error-test-btn').click(function () {
+          localStorage.setItem('forceApiError', '1');
+          location.reload();
         });
 
         let scrollTimeout;
@@ -200,9 +227,14 @@
           $('.loading-container').show();
           $('#error-message').hide();
 
-          $.get(
-            `https://jsonplaceholder.typicode.com/posts?_start=${start}&_limit=${limit}`
-          )
+          let url;
+          if (forceError) {
+            url = `https://jsonplaceholder.typicode.com/hire-me-insider`;
+          } else {
+            url = `https://jsonplaceholder.typicode.com/posts?_start=${start}&_limit=${limit}`;
+          }
+
+          $.get(url)
             .done(function (data) {
               setTimeout(function () {
                 if (data.length === 0) {
@@ -214,12 +246,12 @@
                 }
 
                 data.forEach((item) => {
-                  const $item = $(`
-                  <div class="post-card">
+                  const $item = $(
+                    `<div class="post-card">
                     <h2>${item.title.toUpperCase()}</h2>
                     <p>${item.body}</p>
-                  </div>
-                `);
+                  </div>`
+                  );
                   $('#post-container').append($item);
                 });
 
@@ -231,6 +263,7 @@
             .fail(function (err) {
               $('.loading-container').hide();
               $('#error-message').show();
+              isLoading = false;
               console.log('fetching error', err);
             });
         }
