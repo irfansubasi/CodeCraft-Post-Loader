@@ -4,18 +4,160 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Post Loader</title>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <style>
-     
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+        font-family: 'Roboto', Arial, sans-serif;
+        color: #222;
+        display: flex;
+        justify-content: center;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 40px 24px 24px 24px;
+      }
+
+      .post-header {
+        text-align: center;
+        margin-bottom: 36px;
+      }
+
+      .post-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #2563eb;
+        letter-spacing: -1px;
+      }
+
+      #post-container {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .post-card {
+        width: 100%;
+        background: #f9fafb;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(30, 41, 59, 0.06);
+        padding: 28px 24px 22px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: box-shadow 0.2s, transform 0.2s;
+        border: 1px solid #e5e7eb;
+      }
+
+      .post-card:hover {
+        box-shadow: 0 8px 32px rgba(37, 99, 235, 0.1);
+        transform: translateY(-2px) scale(1.01);
+        border-color: #2563eb33;
+      }
+
+      .post-card h2 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 2px;
+        letter-spacing: 0.2px;
+      }
+
+      .post-card p {
+        font-size: 1rem;
+        color: #475569;
+        line-height: 1.6;
+      }
+
+      .loading-container {
+        text-align: center;
+        margin-top: 32px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        border: 4px solid #e5e7eb;
+        border-top: 4px solid #2563eb;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        animation: spin 1s linear infinite;
+        margin-right: 12px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      #error-message {
+        display: none;
+        text-align: center;
+        margin-top: 24px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border-radius: 10px;
+        padding: 18px 0 10px 0;
+        box-shadow: 0 2px 8px rgba(185, 28, 28, 0.06);
+      }
+
+      #error-message p {
+        margin-bottom: 10px;
+        font-size: 1.08rem;
+      }
+
+      #retry-button {
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 7px 18px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.18s;
+      }
+
+      #retry-button:hover {
+        background: #1e40af;
+      }
+
+      .all-posts-loaded {
+        text-align: center;
+        color: #64748b;
+        font-size: 1.08rem;
+        margin: 30px 0 10px 0;
+      }
     </style>
   </head>
   <body>
     <div class="container">
+      <div class="post-header">
+        <h1>Posts</h1>
+      </div>
       <div id="post-container"></div>
 
       <div class="loading-container">
-        <div class="loading-spinner"><span>Loading...</span></div>
+        <div class="loading-spinner"></div>
       </div>
 
       <div id="error-message">
@@ -59,14 +201,16 @@
             .done(function (data) {
               if (data.length === 0) {
                 $('#loadding-spinner').hide();
-                $("<div class='all-posts-loaded'>All posts loaded</div>").appendTo('#post-container');
+                $(
+                  "<div class='all-posts-loaded'>All posts loaded</div>"
+                ).appendTo('#post-container');
                 return;
               }
 
               data.forEach((item) => {
                 const $item = $(`
                   <div class="post-card">
-                    <h2>${item.title}</h2>
+                    <h2>${item.title.toUpperCase()}</h2>
                     <p>${item.body}</p>
                   </div>
                 `);
