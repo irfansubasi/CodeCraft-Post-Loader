@@ -19,5 +19,67 @@
         <button id="retry-button">Retry</button>
       </div>
     </div>
+
+    <script>
+      $(document).ready(function () {
+        let start = 0;
+        const limit = 5;
+        let isLoading = false;
+
+        loadPosts();
+
+        let scrollTimeout;
+        $(window).scroll(function () {
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(function () {
+            if (
+              $(window).scrollTop() + $(window).height() >=
+              $(document).height() - 150
+            ) {
+              loadPosts();
+            }
+          }, 300);
+        });
+
+        function loadPosts() {
+          if (isLoading) return;
+
+          isLoading = true;
+
+          $('#loadding-spinner').show();
+          $('#error-message').hide();
+
+          $.get(
+            `https://jsonplaceholder.typicode.com/posts?_start=${start}&_limit=${limit}`
+          )
+            .done(function (data) {
+              if (data.length === 0) {
+                $('#loadding-spinner').hide();
+                $('#error-message').show();
+                return;
+              }
+
+              data.forEach((item) => {
+                const $item = $(`
+                                <div class="post-card">
+                                    <h2>${item.title}</h2>
+                                    <p>${item.body}</p>
+                                </div>
+                                `);
+
+                $('#post-container').append($item);
+              });
+
+              start += limit;
+              isLoading = false;
+              $('#loadding-spinner').hide();
+            })
+            .fail(function (err) {
+              $('#error-message').show();
+              console.log('fetching error', err);
+            });
+        }
+      });
+    </script>
   </body>
 </html>
