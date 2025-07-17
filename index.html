@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Post Loader</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+     
+    </style>
   </head>
   <body>
     <div class="container">
@@ -55,18 +59,17 @@
             .done(function (data) {
               if (data.length === 0) {
                 $('#loadding-spinner').hide();
-                $('#error-message').show();
+                $("<div class='all-posts-loaded'>All posts loaded</div>").appendTo('#post-container');
                 return;
               }
 
               data.forEach((item) => {
                 const $item = $(`
-                                <div class="post-card">
-                                    <h2>${item.title}</h2>
-                                    <p>${item.body}</p>
-                                </div>
-                                `);
-
+                  <div class="post-card">
+                    <h2>${item.title}</h2>
+                    <p>${item.body}</p>
+                  </div>
+                `);
                 $('#post-container').append($item);
               });
 
